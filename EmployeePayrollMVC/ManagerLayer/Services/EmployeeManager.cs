@@ -31,6 +31,16 @@ namespace ManagerLayer.Services
             return empRepo.GetEmployeeData(id);
         }
 
+        public EmployeeModel GetEmployeeDataByName(string name)
+        {
+            return empRepo.GetEmployeeDataByName(name);
+        }
+
+        public EmployeeModel InsertOrUpdate(EmployeeModel employee)
+        {
+            return empRepo.InsertOrUpdate(employee);
+        }
+
         public string UpdateEmployee(EmployeeModel employee)
         {
             return empRepo.UpdateEmployee(employee);
@@ -39,6 +49,11 @@ namespace ManagerLayer.Services
         public string DeleteEmployee(int id)
         {
             return empRepo.DeleteEmployee(id);
+        }
+
+        public EmployeeModel EmpLogin(EmpLoginModel login)
+        {
+            return empRepo.EmpLogin(login);
         }
     }
 }

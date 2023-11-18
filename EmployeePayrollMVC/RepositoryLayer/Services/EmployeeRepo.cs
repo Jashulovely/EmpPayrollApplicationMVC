@@ -175,5 +175,115 @@ namespace RepositoryLayer.Services
                 return null;
             }
         }
+
+
+
+        public EmployeeModel EmpLogin(EmpLoginModel login)
+        {
+            if (login != null)
+            {
+                EmployeeModel employee = new EmployeeModel();
+
+                using (SqlConnection con = new SqlConnection(this.configuration["ConnectionStrings:EmployeePayrollMVC"]))
+                {
+                    SqlCommand cmd = new SqlCommand("uspEmpLogin", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@EmpId", login.EmpId);
+                    cmd.Parameters.AddWithValue("@EmpName", login.EmpName);
+
+                    con.Open();
+                    SqlDataReader rdr = cmd.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+                        employee.EmpId = rdr.GetInt32("EmpId");
+                        employee.EmpName = rdr["EmpName"].ToString();
+                        employee.ProfileImage = rdr["ProfileImage"].ToString();
+                        employee.Gender = rdr["Gender"].ToString();
+                        employee.Department = rdr["Department"].ToString();
+                        employee.Salary = Convert.ToInt32(rdr["Salary"]);
+                        employee.StartDate = Convert.ToDateTime(rdr["StartDate"]);
+                        employee.Notes = rdr["Notes"].ToString();
+                    }
+                    con.Close();
+                }
+                return employee;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        public EmployeeModel GetEmployeeDataByName(string name)
+        {
+            if (name != null)
+            {
+                EmployeeModel employee = new EmployeeModel();
+
+                using (SqlConnection con = new SqlConnection(this.configuration["ConnectionStrings:EmployeePayrollMVC"]))
+                {
+                    SqlCommand cmd = new SqlCommand("uspGetEmployeeByName", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@EmpName", name);
+
+                    con.Open();
+                    SqlDataReader rdr = cmd.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+                        employee.EmpId = rdr.GetInt32("EmpId");
+                        employee.EmpName = rdr["EmpName"].ToString();
+                        employee.ProfileImage = rdr["ProfileImage"].ToString();
+                        employee.Gender = rdr["Gender"].ToString();
+                        employee.Department = rdr["Department"].ToString();
+                        employee.Salary = Convert.ToInt32(rdr["Salary"]);
+                        employee.StartDate = Convert.ToDateTime(rdr["StartDate"]);
+                        employee.Notes = rdr["Notes"].ToString();
+                    }
+                    con.Close();
+                }
+                return employee;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
+
+        public EmployeeModel InsertOrUpdate(EmployeeModel employee)
+        {
+            if (employee != null)
+            {
+                using (SqlConnection con = new SqlConnection(this.configuration["ConnectionStrings:EmployeePayrollMVC"]))
+                {
+                    SqlCommand cmd = new SqlCommand("uspCheckIdToUpdateOrInsert", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@EmpId", employee.EmpId);
+                    cmd.Parameters.AddWithValue("@EmpName", employee.EmpName);
+                    cmd.Parameters.AddWithValue("@ProfileImage", employee.ProfileImage);
+                    cmd.Parameters.AddWithValue("@Gender", employee.Gender);
+                    cmd.Parameters.AddWithValue("@Department", employee.Department);
+                    cmd.Parameters.AddWithValue("@Salary", employee.Salary);
+                    cmd.Parameters.AddWithValue("@StartDate", employee.StartDate);
+                    cmd.Parameters.AddWithValue("@Notes", employee.Notes);
+
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    con.Close();
+                }
+                return employee;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
+
+
     }
 }

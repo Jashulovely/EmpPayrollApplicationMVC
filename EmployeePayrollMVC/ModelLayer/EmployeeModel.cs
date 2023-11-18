@@ -9,7 +9,8 @@ namespace ModelLayer
     {
 
         public int EmpId { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Name is required")]
+        [RegularExpression(@"^[A-Z][a-z]{1,}(\s[A-Z][a-z]{2,})*$", ErrorMessage = "Name is not valid")]
         public string EmpName { get; set; }
         [Required]
         public string ProfileImage { get; set; }

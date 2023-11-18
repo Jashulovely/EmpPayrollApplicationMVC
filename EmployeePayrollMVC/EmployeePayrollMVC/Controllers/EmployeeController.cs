@@ -1,8 +1,11 @@
 ﻿using ManagerLayer.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModelLayer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace EmployeePayrollMVC.Controllers
 {
@@ -16,12 +19,14 @@ namespace EmployeePayrollMVC.Controllers
         }
 
         [HttpGet]
+        [Route("Register")]
         public IActionResult AddEmployee()
         {
             return View();
         }
 
         [HttpPost]
+        [Route("Register")]
         public IActionResult AddEmployee([Bind] EmployeeModel employee)
         {
             EmployeeModel model = new EmployeeModel();  
@@ -42,11 +47,85 @@ namespace EmployeePayrollMVC.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int id)
+        [Route("Details")]
+        public IActionResult Details(int id)
         {
-            if (id == null)
+            try
+            {
+                id = (int)HttpContext.Session.GetInt32("EmpId");
+            }catch(Exception e){
+                return RedirectToAction("Login");
+                throw e;
+            }
+            EmployeeModel employee = manager.GetEmployeeData(id);
+
+            if (employee == null)
             {
                 return NotFound();
+            }
+            return View(employee);
+        }
+
+        [HttpGet]
+        //[Route("DetailsByName/{name}")]
+        public IActionResult DetailsByName(string name)
+        {
+            try
+            {
+                name = HttpContext.Session.GetString("EmpName");
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction("Login");
+                throw e;
+            }
+            EmployeeModel employee = manager.GetEmployeeDataByName(name);
+
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            return View(employee);
+        }
+
+
+
+
+        [HttpGet]
+        //[Route("RegisterOrUpdate")]
+        public IActionResult InsertOrUpdateEmployee()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        //[Route("RegisterOrUpdate")]
+        public IActionResult InsertOrUpdateEmployee([Bind] EmployeeModel employee)
+        {
+            EmployeeModel model = new EmployeeModel();
+            if (ModelState.IsValid)
+            {
+                model = manager.InsertOrUpdate(employee);
+                return RedirectToAction("AllEmployees");
+            }
+            return View(model);
+        }
+
+
+
+
+        [HttpGet]
+        [Route("Update/{id}")]
+        public IActionResult Edit(int id)
+        {
+            try
+            {
+                id = (int)HttpContext.Session.GetInt32("EmpId");
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction("Login");
+                throw e;
             }
             EmployeeModel employee = manager.GetEmployeeData(id);
 
@@ -58,6 +137,7 @@ namespace EmployeePayrollMVC.Controllers
         }
 
         [HttpPost]
+        [Route("Update/{id}")]
         public IActionResult Edit(int id, [Bind] EmployeeModel employee)
         {
             if (id != employee.EmpId)
@@ -73,11 +153,17 @@ namespace EmployeePayrollMVC.Controllers
         }
 
         [HttpGet]
+        [Route("Delete/{id}")]
         public IActionResult Delete(int id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
+                id = (int)HttpContext.Session.GetInt32("EmpId");
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction("Login");
+                throw e;
             }
             EmployeeModel employee = manager.GetEmployeeData(id);
 
@@ -89,10 +175,34 @@ namespace EmployeePayrollMVC.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
+        [Route("Delete/{id}")]
         public IActionResult DeleteConfirmed(int id)
         {
             manager.DeleteEmployee(id);
             return RedirectToAction("AllEmployees");
         }
+
+
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Login(EmpLoginModel login)
+        {
+            var emp = manager.EmpLogin(login);
+            if (emp != null)
+            {
+                HttpContext.Session.SetInt32("EmpId", emp.EmpId);
+                HttpContext.Session.SetString("EmpName", emp.EmpName);
+                return RedirectToAction("Details");
+            }
+            else
+            {
+                return RedirectToAction("AllEmployees");
+            }
+        }
+        
     }
 }

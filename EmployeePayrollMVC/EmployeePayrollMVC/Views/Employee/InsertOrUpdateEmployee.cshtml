@@ -1,22 +1,22 @@
 ﻿@model ModelLayer.EmployeeModel
 
 @{
-    ViewData["Title"] = "AddEmployee";
+    ViewData["Title"] = "InsertOrUpdateEmployee";
 }
 
-<h1>AddEmployee</h1>
+<h1>InsertOrUpdateEmployee</h1>
 
 <h4>EmployeeModel</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="AddEmployee">
+        <form asp-action="InsertOrUpdateEmployee">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @* <div class="form-group">
+            <div class="form-group">
                 <label asp-for="EmpId" class="control-label"></label>
                 <input asp-for="EmpId" class="form-control" />
                 <span asp-validation-for="EmpId" class="text-danger"></span>
-            </div> *@
+            </div>
             <div class="form-group">
                 <label asp-for="EmpName" class="control-label"></label>
                 <input asp-for="EmpName" class="form-control" />
@@ -44,16 +44,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Department" class="control-label"></label>
-                <select asp-for="Department" class="form-control">
-                    <option value="">-- Select Department --</option>
-                    <option value="IT">IT</option>
-                    <option value="Engineer">Engineer</option>
-                    <option value="NonIT">NonIT</option>
-                    <option value="Accounts">Accounts</option>
-                    <option value="Test">Test</option>
-                    <option value="Sales">Sales</option>
-                    <option value="Marketing">Marketing</option>
-                </select>
+                <input asp-for="Department" class="form-control" />
                 <span asp-validation-for="Department" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -72,7 +63,7 @@
                 <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="CreateOrUpadate" class="btn btn-primary" />
             </div>
         </form>
     </div>
